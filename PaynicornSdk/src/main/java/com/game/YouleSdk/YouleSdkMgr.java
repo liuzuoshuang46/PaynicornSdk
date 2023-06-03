@@ -56,6 +56,8 @@ public class YouleSdkMgr {
     }
     public void initAd(Context var1,String appkey,String model,String AP_ID,String CP_ID,String API_KEY,boolean isDebugger)
     {
+
+
         request = new NetUtil(appkey,model);
         var = var1;
         MobileAdsMgr.getsInstance().initAd(var1);
