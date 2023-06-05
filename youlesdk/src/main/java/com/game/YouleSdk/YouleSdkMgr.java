@@ -146,7 +146,7 @@ public class YouleSdkMgr {
     public void  startPay(Activity var1,String rewardedAdId,CallBackFunction callBack) throws Exception {
         if(request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentId.length() <= 0)
         {
-            Log.i(TAG,"YouleSdkMgr.startPay sdk初始化参数错误；userCode:"+request.userCode+";choiceId:"+request.choiceId+";paymentId"+request.paymentId);
+            Log.i(TAG,"YouleSdkMgr.startPay sdk初始化参数错误；userCode:"+request.userCode+";choiceId:"+request.choiceId+";paymentId"+request.paymentType);
             MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId,callBack);
             return;
         }
@@ -164,7 +164,7 @@ public class YouleSdkMgr {
             return;
         }
 
-        if(request.paymentId.indexOf("2") != -1)
+        if(request.paymentType.indexOf("AD") != -1)
         {
             Log.i(TAG,"YouleSdkMgr.startPay 支付方式为广告");
             MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId,callBack);

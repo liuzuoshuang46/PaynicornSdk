@@ -18,7 +18,7 @@ public class NetUtil{
     private String model = "";
     public String userCode = "";
     public String choiceId = "";
-    public String paymentId = "";
+    public String paymentType = "";
 
     NetUtil(String _appkey,String _model)
     {
@@ -141,8 +141,8 @@ public class NetUtil{
                 Log.d(TAG, "firstChoice:"+firstChoice);
                 JSONObject firstChoiceJson = new JSONObject(firstChoice);
                 choiceId = firstChoiceJson.getString("id");
-                paymentId = firstChoiceJson.getString("paymentTypeId");
-                Log.d(TAG, "choiceId:"+choiceId +";paymentTypeId:"+paymentId);
+                paymentType = firstChoiceJson.getString("paymentType");
+                Log.d(TAG, "choiceId:"+choiceId +";paymentType:"+paymentType);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -151,8 +151,8 @@ public class NetUtil{
         // {
         // "status":"SUCCESS","errorCode":null,"message":null,
         //      "content":{
-        //          "firstChoice":{"id":1,"paymentTypeId":0,"paymentName":"短信支付","datetime":null},
-        //          "alternateList":[{"id":2,"paymentTypeId":0,"paymentName":"广告支付","datetime":null}]
+        //          "firstChoice":{"id":1,"paymentType":"VAS","paymentName":"短信支付","datetime":null},
+        //          "alternateList":[{"id":2,"paymentType":"AD","paymentName":"广告支付","datetime":null}]
         //      }
         //  }
         //  content 中的 firstChoice 是首选，alternateList 是备选，备选可能会有多个
