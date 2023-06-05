@@ -8,6 +8,3 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "youlesdk"
-include ':app'
-include ':youlesdk'
-include ':nativetemplates'
