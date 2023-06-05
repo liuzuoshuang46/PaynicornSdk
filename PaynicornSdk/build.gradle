@@ -46,7 +46,7 @@ android {
 
                     // You can then customize attributes of the publication as shown below.
                     groupId = 'com.game.youlesdk' // 这个是依赖库的组 idq
-                    artifactId = 'paynicornsdk' // 依赖库的名称（jitpack 都不会使用到）
+                    artifactId = 'youlesdk' // 依赖库的名称（jitpack 都不会使用到）
                     version = versionName
                 }
             }
@@ -75,6 +75,9 @@ dependencies {
     /******************************paysdk支付************************************/
     api "com.transsion.pay:paysdk:1.5.4.6"
 
+//    /******************************applovin广告源************************************/
+//    implementation 'com.applovin:applovin-sdk:+'
+//    implementation("androidx.lifecycle:lifecycle-process:2.2.0")
 
     /******************************google广告源************************************/
     def lifecycle_version = "2.0.0"
