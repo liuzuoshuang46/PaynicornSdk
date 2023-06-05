@@ -144,7 +144,7 @@ public class YouleSdkMgr {
         }).start();
     }
     public void  startPay(Activity var1,String rewardedAdId,CallBackFunction callBack) throws Exception {
-        if(request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentId.length() <= 0)
+        if(request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentType.length() <= 0)
         {
             Log.i(TAG,"YouleSdkMgr.startPay sdk初始化参数错误；userCode:"+request.userCode+";choiceId:"+request.choiceId+";paymentId"+request.paymentType);
             MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId,callBack);
