@@ -7,7 +7,7 @@ dependencyResolutionManagement {
         maven{ url 'https://mvn.shalltry.com/repository/maven-public'}
     }
 }
-rootProject.name = "PaynicornSdk"
+rootProject.name = "youlesdk"
 include ':app'
-include ':PaynicornSdk'
+include ':youlesdk'
 include ':nativetemplates'
