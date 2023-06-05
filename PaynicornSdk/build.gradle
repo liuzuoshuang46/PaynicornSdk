@@ -1,21 +1,15 @@
 plugins {
+    id 'com.android.library'
     id 'maven-publish'
 }
-//apply plugin: 'applovin-quality-service'
-//applovin {
-//    apiKey "YOUR_AD_REVIEW_KEY_HERE"
-//}
-task generateSourcesJar(type: Jar){
-    from android.sourceSets.main.java.srcDirs
-    classifier  'sources'
-}
+
 android {
-    compileSdk 30
-    buildToolsVersion "30.0.3"
+    compileSdk 31
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         minSdk 19
-        targetSdk 30
+        targetSdk 31
         versionCode 104
         versionName "1.0.4"
 
@@ -36,40 +30,26 @@ android {
     }
     afterEvaluate {
         publishing {
-            def versionName = "1.0" // 当前版本依赖库版本号，这个jitpack不会使用到，只是我们开发者自己查看
             publications {
-                // Creates a Maven publication called "release".
                 release(MavenPublication) {
-                    // Applies the component for the release build variant.
-                    from components.release // 表示发布 release（jitpack 都不会使用到）
-
-                    // You can then customize attributes of the publication as shown below.
-                    groupId = 'com.game.youlesdk' // 这个是依赖库的组 idq
-                    artifactId = 'PaynicornSdk' // 依赖库的名称（jitpack 都不会使用到）
-                    version = versionName
-                }
-            }
-            repositories {
-                // 下面这部分，不是很清楚加不加，但是最后加上
-                maven {
-                    // change URLs to point to your repos, e.g. http://my.org/repo
-                    def baseUrl = buildDir.getParent()
-                    def releasesRepoUrl = "$baseUrl/repos/releases"
-                    def snapshotsRepoUrl = "$baseUrl/repos/snapshots"
-                    url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                    from components.release
+                    groupId = 'com.wustyq.ToastLib' //groupId 随便取
+                    artifactId = 'wustyq'  //artifactId 随便取
+                    version = '1.0.0'
                 }
             }
         }
     }
+
 }
 
 dependencies {
-//    implementation(fileTree("libs"));
+    implementation(fileTree("libs"));
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.6.0'
-//    testImplementation 'junit:junit:4.+'
+    testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     /******************************paysdk支付************************************/
     api "com.transsion.pay:paysdk:1.5.4.6"
@@ -85,9 +65,9 @@ dependencies {
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     implementation 'com.google.android.gms:play-services-ads:22.0.0'
     /******************************nativetemplates************************************/
-    testImplementation 'junit:junit:4.13.1'
+//    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.google.android.gms:play-services-ads:20.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.errorprone:error_prone_annotations:2.16'

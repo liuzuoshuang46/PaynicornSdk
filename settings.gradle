@@ -1,10 +1,3 @@
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-        maven{ url 'https://mvn.shalltry.com/repository/maven-public'}
-    }
-}
-rootProject.name = "youlesdk"
+
+rootProject.name = "PaynicornSdk"
+include ':PaynicornSdk'
