@@ -108,7 +108,7 @@ public class PaySdkMgr {
         startPayEntity.adjustMode = BigDecimal.ROUND_UP;//设置adjustMode会根据设置 的mode，结合对应的币种来处理传入的金额各个位数取整，以防传入
         startPayEntity.serviceConfigPriority = true;
 
-         return PaySDKManager.getsInstance().startPay(var1, startPayEntity, var3);
+        return PaySDKManager.getsInstance().startPay(var1, startPayEntity, var3);
 
     }
 }
