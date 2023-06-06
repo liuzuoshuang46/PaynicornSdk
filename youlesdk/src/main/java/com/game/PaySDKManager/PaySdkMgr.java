@@ -95,7 +95,7 @@ public class PaySdkMgr {
         PaySDKManager.getsInstance().convertVirtualToLocal(var1,var2,var3);
     }
     //发起在线支付或者短代支付
-    public  String startPay(Activity var1, StartPayEntity var2, StartPayCallBack var3) throws Exception  {
+    public  void startPay(Activity var1, StartPayEntity var2, StartPayCallBack var3)  {
 
         StartPayEntity startPayEntity = new StartPayEntity();
         startPayEntity.amount =  var2.amount;
@@ -108,7 +108,13 @@ public class PaySdkMgr {
         startPayEntity.adjustMode = BigDecimal.ROUND_UP;//设置adjustMode会根据设置 的mode，结合对应的币种来处理传入的金额各个位数取整，以防传入
         startPayEntity.serviceConfigPriority = true;
 
-        return PaySDKManager.getsInstance().startPay(var1, startPayEntity, var3);
+        try {
+            PaySDKManager.getsInstance().startPay(var1, startPayEntity, var3);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "startPay: ",e );
+            var3.onPayFail(1,null);
+        }
 
     }
 }

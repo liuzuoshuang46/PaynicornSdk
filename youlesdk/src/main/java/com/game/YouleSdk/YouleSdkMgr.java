@@ -253,7 +253,7 @@ public class YouleSdkMgr {
         });
 
     }
-    public void paySdkStartPay(Activity var1,CallBackFunction callBack) throws Exception
+    public void paySdkStartPay(Activity var1,CallBackFunction callBack)
     {
 
 

@@ -52,7 +52,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     /******************************paysdk支付************************************/
-    api "com.transsion.pay:paysdk:1.5.4.6"
+    api "com.transsion.pay:paysdk:1.5.4.17"
 
 //    /******************************applovin广告源************************************/
 //    implementation 'com.applovin:applovin-sdk:+'
