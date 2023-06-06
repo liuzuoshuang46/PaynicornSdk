@@ -39,6 +39,13 @@ public class MobileAdsMgr {
 
     private String TAG = "MobileAdsMgr";
     private static MobileAdsMgr _instance = null;
+    /***************激励相关*****************/
+    public String rewardedAdId = "";
+    public static RewardedAd rewardedAd = null;
+    public static boolean isRewarded = false;
+    public CallBackFunction rewardedAdCallBack = null;
+    public static Activity tempActivity = null;
+
     public static MobileAdsMgr getsInstance() {
         if(MobileAdsMgr._instance == null)
         {
@@ -60,22 +67,36 @@ public class MobileAdsMgr {
             }
         });
     }
-
-    public void createRewardedAd(Activity var1, String var2, CallBackFunction callBack)
+    public void preloadAd(Activity var1,String adId)
     {
+        tempActivity = var1;
+        rewardedAdId = adId;
+    }
+
+    public void preloadRewardedAd(boolean isShow)
+    {
+        Log.d(TAG, "preloadRewardedAd:"+rewardedAdId);
+
+        this.isRewarded = false;
         AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
-        RewardedAd.load(var1, var2, adRequest, new RewardedAdLoadCallback() {
+        RewardedAd.load(tempActivity, rewardedAdId, adRequest, new RewardedAdLoadCallback() {
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 // Handle the error.
                 Log.d(TAG, "onAdFailedToLoad"+loadAdError.toString());
+                rewardedAd = null;
+                if(rewardedAdCallBack != null)
+                {
+                    rewardedAdCallBack.onCallBack(isRewarded);
+                }
+
             }
 
             @Override
             public void onAdLoaded(@NonNull RewardedAd ad) {
-
+                rewardedAd = ad;
                 Log.d(TAG, "Ad was loaded.");
-                ad.setFullScreenContentCallback(new FullScreenContentCallback() {
+                rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                     @Override
                     public void onAdClicked() {
                         // Called when a click is recorded for an ad.
@@ -87,14 +108,19 @@ public class MobileAdsMgr {
                         // Called when ad is dismissed.
                         // Set the ad reference to null so you don't show the ad a second time.
                         Log.d(TAG, "Ad dismissed fullscreen content.");
-                        callBack.onCallBack(true);
+                        rewardedAd = null;
+                        isRewarded = true;
+                        rewardedAdCallBack.onCallBack(isRewarded);
+                        preloadRewardedAd(false);
                     }
 
                     @Override
                     public void onAdFailedToShowFullScreenContent(AdError adError) {
                         // Called when ad fails to show.
                         Log.e(TAG, "Ad failed to show fullscreen content.");
-                        callBack.onCallBack(false);
+//                        rewardedAd = null;
+//                        isRewarded = false;
+//                        rewardedAdCallBack.onCallBack(isRewarded);
                     }
 
                     @Override
@@ -109,19 +135,32 @@ public class MobileAdsMgr {
                         Log.d(TAG, "Ad showed fullscreen content.");
                     }
                 });
-                ad.show(var1, new OnUserEarnedRewardListener() {
-                    @Override
-                    public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-                        // Handle the reward.
-                        Log.d(TAG, "The user earned the reward.");
-                        int rewardAmount = rewardItem.getAmount();
-                        String rewardType = rewardItem.getType();
-
-                    }
-                });
+                if(isShow == true) {
+                    showRewardedAd(rewardedAdCallBack);
+                }
             }
         });
 
+    }
+    public void showRewardedAd(CallBackFunction callBack)
+    {
+        rewardedAdCallBack = callBack;
+        Log.d(TAG, "showRewardedAd:"+rewardedAdId);
+        if(rewardedAd == null)
+        {
+            this.preloadRewardedAd(true);
+            return;
+        }
+        rewardedAd.show(tempActivity, new OnUserEarnedRewardListener() {
+            @Override
+            public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                // Handle the reward.
+                Log.d(TAG, "The user earned the reward.");
+                isRewarded = true;
+                int rewardAmount = rewardItem.getAmount();
+                String rewardType = rewardItem.getType();
+            }
+        });
     }
 
     public void createBanner(Activity var1, String var2)

@@ -33,6 +33,7 @@ import com.transsion.pay.paysdk.manager.testmode.SMSTestUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class YouleSdkMgr {
@@ -44,6 +45,14 @@ public class YouleSdkMgr {
     private Context var =  null;
     private PhoneInfo info =  null;
     private String payOrderNum = "";//支付的订单号
+    private HashMap<String,String> list;
+
+    private String appkey = "";
+    private String model = "";
+    private String AP_ID = "";
+    private String CP_ID = "";
+    private String API_KEY = "";
+    private String rewardedAdId = "";
     public static YouleSdkMgr getsInstance() {
         if(YouleSdkMgr._instance == null)
         {
@@ -54,9 +63,16 @@ public class YouleSdkMgr {
     private YouleSdkMgr() {
         Log.e(TAG,"YouleSdkMgr");
     }
-    public void initAd(Context var1,String appkey,String model,String AP_ID,String CP_ID,String API_KEY,boolean isDebugger)
+    public void initAd(Context var1, HashMap<String,String> var2,boolean isDebugger)
     {
 
+        list = var2;
+        appkey = list.get("appkey");
+        model = list.get("model");
+        AP_ID = list.get("AP_ID");
+        CP_ID = list.get("CP_ID");
+        API_KEY = list.get("API_KEY");
+        rewardedAdId = list.get("RewardedAdId");
 
         request = new NetUtil(appkey,model);
         var = var1;
@@ -89,8 +105,41 @@ public class YouleSdkMgr {
         });
 
 
-
     }
+//    public void initAd(Context var1,String appkey,String model,String AP_ID,String CP_ID,String API_KEY,boolean isDebugger)
+//    {
+//
+//
+//        request = new NetUtil(appkey,model);
+//        var = var1;
+//        MobileAdsMgr.getsInstance().initAd(var1);
+//        info = new PhoneInfo(var1);
+//
+//        if(isDebugger == true)
+//        {
+//            PaySdkMgr.getsInstance().setTestMode();
+//        }
+//        PaySdkMgr.getsInstance().setStrict(true);
+//        PaySdkMgr.getsInstance().initAriesPay(var1,AP_ID,CP_ID,API_KEY,StartPayEntity.PAY_MODE_SMS, new InitResultCallBack() {
+//
+//            @Override
+//            public void onSuccess(List<SupportPayInfoEntity> list, boolean b, CountryCurrencyData countryCurrencyData) {
+//                Log.i(TAG,"onSuccess:"+
+//                        countryCurrencyData.countryCode + "	"+
+//                        countryCurrencyData.currency + " "+
+//                        countryCurrencyData.mcc +" "+
+//                        countryCurrencyData.smsOptimalAmount);
+//                tempData = countryCurrencyData;
+//
+//                YouleSdkMgr.getsInstance().getUserCode();
+//            }
+//
+//            @Override
+//            public void onFail(int i) {
+//                Log.i(TAG,"onFail:"+i);
+//            }
+//        });
+//    }
 //    public void initAd(Context var1,List<String> id,boolean isDebugger)
 //    {
 //        request = new NetUtil("80000004","game");
@@ -128,6 +177,11 @@ public class YouleSdkMgr {
 //
 //    }
 
+    public void preloadAd(Activity var1)
+    {
+        MobileAdsMgr.getsInstance().preloadAd(var1,rewardedAdId);
+        MobileAdsMgr.getsInstance().preloadRewardedAd(false);
+    }
 
     public void getUserCode()
     {
@@ -143,31 +197,31 @@ public class YouleSdkMgr {
             }
         }).start();
     }
-    public void  startPay(Activity var1,String rewardedAdId,CallBackFunction callBack) throws Exception {
+    public void  startPay(Activity var1,CallBackFunction callBack) throws Exception {
         if(request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentType.length() <= 0)
         {
             Log.i(TAG,"YouleSdkMgr.startPay sdk初始化参数错误；userCode:"+request.userCode+";choiceId:"+request.choiceId+";paymentId"+request.paymentType);
-            MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId,callBack);
+            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
             return;
         }
         if(tempData == null || tempData.smsOptimalAmount <= 0)
         {
             Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
-            MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId,callBack);
+            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
             return;
         }
 
         if(tempData == null || tempData.smsOptimalAmount <= 0)
         {
             Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
-            MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId,callBack);
+            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
             return;
         }
 
         if(request.paymentType.indexOf("AD") != -1)
         {
             Log.i(TAG,"YouleSdkMgr.startPay 支付方式为广告");
-            MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId,callBack);
+            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
             return;
         }
 
@@ -177,10 +231,11 @@ public class YouleSdkMgr {
             @Override
             public void onCallBack(boolean data) {
 
+                Log.i(TAG,"paySdkStartPay"+data);
                 if(data == false)
                 {
                     Log.i(TAG,"支付失败调用广告");
-                    MobileAdsMgr.getsInstance().createRewardedAd(var1, rewardedAdId, new CallBackFunction() {
+                    MobileAdsMgr.getsInstance().showRewardedAd( new CallBackFunction() {
 
                         @Override
                         public void onCallBack(boolean data) {
@@ -247,7 +302,7 @@ public class YouleSdkMgr {
                 YouleSdkMgr.getsInstance().smsPaymentNotify(false);
             }
         });
-        Log.i(TAG,"PaySdkMgr.startPay.payOrderNum:"+payOrderNum);
+//        Log.i(TAG,"PaySdkMgr.startPay.payOrderNum:"+payOrderNum);
     }
 
     public void smsPaymentNotify(boolean  paymentStatus)

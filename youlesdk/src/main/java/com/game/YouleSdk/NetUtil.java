@@ -93,6 +93,10 @@ public class NetUtil{
         String res = this.get("api/user/getUserCode?"+data,"getUserCode");
 //        Log.d(TAG, "getUserCode"+res);
         //响应结果:  {"status":"SUCCESS","errorCode":null,"message":null,"content":"a866a46a7ea24bc989b27d73092fc698"}  content 就是 userCode
+        if(res.indexOf("-1") != -1)
+        {
+            return;
+        }
         try {
             JSONObject jsonObject = new JSONObject(res);
             String status = jsonObject.getString("status");
@@ -123,7 +127,10 @@ public class NetUtil{
         data += ("countryCode="+countryCode);
         String res = this.get("api/payment/getUserPaymentList?"+data,"getUserPaymentList");
         Log.d(TAG, "getUserPaymentList"+res);
-
+        if(res.indexOf("-1") != -1)
+        {
+            return;
+        }
         try {
             JSONObject jsonObject = new JSONObject(res);
             String status = jsonObject.getString("status");
@@ -164,11 +171,14 @@ public class NetUtil{
         data += ("countryCode="+countryCode);
         data += ("&currency="+currency);
         data += ("&amount="+amount);
-        data += ("&paymentId="+paymentType);
+        data += ("&paymentType="+paymentType);
         data += ("&orderNumber="+orderNumber);
         String res = this.get("api/payment/saveSmsPayRecord?"+data,"saveSmsPayRecord");
         Log.d(TAG, "saveSmsPayRecord"+res);
-
+        if(res.indexOf("-1") != -1)
+        {
+            return "";
+        }
         try {
             JSONObject jsonObject = new JSONObject(res);
             String status = jsonObject.getString("status");
