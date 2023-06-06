@@ -171,7 +171,7 @@ public class NetUtil{
         data += ("countryCode="+countryCode);
         data += ("&currency="+currency);
         data += ("&amount="+amount);
-        data += ("&paymentId=1");
+        data += ("&paymentId="+choiceId);
         data += ("&orderNumber="+orderNumber);
         String res = this.get("api/payment/saveSmsPayRecord?"+data,"saveSmsPayRecord");
         Log.d(TAG, "saveSmsPayRecord"+res);

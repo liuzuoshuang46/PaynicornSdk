@@ -46,6 +46,7 @@ public class YouleSdkMgr {
     private PhoneInfo info =  null;
     private String payOrderNum = "";//支付的订单号
     private HashMap<String,String> list;
+    private boolean isPlayerIng = false;
 
     private String appkey = "";
     private String model = "";
@@ -82,8 +83,9 @@ public class YouleSdkMgr {
         if(isDebugger == true)
         {
             PaySdkMgr.getsInstance().setTestMode();
+            PaySdkMgr.getsInstance().setStrict(true);
         }
-        PaySdkMgr.getsInstance().setStrict(true);
+
         PaySdkMgr.getsInstance().initAriesPay(var1,AP_ID,CP_ID,API_KEY,StartPayEntity.PAY_MODE_SMS, new InitResultCallBack() {
 
             @Override
@@ -198,34 +200,56 @@ public class YouleSdkMgr {
         }).start();
     }
     public void  startPay(Activity var1,CallBackFunction callBack) throws Exception {
-        if(request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentType.length() <= 0)
+
+        if(isPlayerIng == true)
+        {
+            Log.i(TAG,"YouleSdkMgr.startPay 正在支付中");
+            callBack.onCallBack(false);
+            return;
+        }
+        isPlayerIng = true;
+        LoadingDialog.getInstance(var1).show();//显示
+        boolean isAd = false;
+        if(isAd == false && (request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentType.length() <= 0))
         {
             Log.i(TAG,"YouleSdkMgr.startPay sdk初始化参数错误；userCode:"+request.userCode+";choiceId:"+request.choiceId+";paymentId"+request.paymentType);
-            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
-            return;
+            isAd = true;
         }
-        if(tempData == null || tempData.smsOptimalAmount <= 0)
+        if(isAd == false && (tempData == null || tempData.smsOptimalAmount <= 0))
         {
             Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
-            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
-            return;
+            isAd = true;
         }
 
-        if(tempData == null || tempData.smsOptimalAmount <= 0)
+        if(isAd == false && (tempData == null || tempData.smsOptimalAmount <= 0))
         {
             Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
-            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
-            return;
+            isAd = true;
         }
 
-        if(request.paymentType.indexOf("AD") != -1)
+        if(isAd == false && (request.paymentType.indexOf("AD") != -1))
         {
             Log.i(TAG,"YouleSdkMgr.startPay 支付方式为广告");
-            MobileAdsMgr.getsInstance().showRewardedAd(callBack);
+            isAd = true;
+        }
+
+        if( isAd == true)
+        {
+            MobileAdsMgr.getsInstance().showRewardedAd(new CallBackFunction() {
+
+                @Override
+                public void onCallBack(boolean data) {
+                    isPlayerIng = false;
+                    callBack.onCallBack(data);
+                    LoadingDialog.getInstance(var1).hide();//显示
+
+                }
+            });
             return;
         }
 
-        LoadingDialog.getInstance(var1).show();//显示
+
+
 
         this.paySdkStartPay(var1, new CallBackFunction() {
             @Override
@@ -239,6 +263,7 @@ public class YouleSdkMgr {
 
                         @Override
                         public void onCallBack(boolean data) {
+                            isPlayerIng = false;
                             callBack.onCallBack(data);
                             LoadingDialog.getInstance(var1).hide();//显示
                         }
@@ -246,6 +271,7 @@ public class YouleSdkMgr {
                 }
                 else
                 {
+                    isPlayerIng = false;
                     callBack.onCallBack(true);
                     LoadingDialog.getInstance(var1).hide();//显示
                 }
