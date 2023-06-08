@@ -47,7 +47,6 @@ public class YouleSdkMgr {
     private String payOrderNum = "";//支付的订单号
     private HashMap<String,String> list;
     private boolean isPlayerIng = false;
-    private Handler handler = new Handler();
 
     private String appkey = "";
     private String model = "";
@@ -109,77 +108,6 @@ public class YouleSdkMgr {
 
 
     }
-//    public void initAd(Context var1,String appkey,String model,String AP_ID,String CP_ID,String API_KEY,boolean isDebugger)
-//    {
-//
-//
-//        request = new NetUtil(appkey,model);
-//        var = var1;
-//        MobileAdsMgr.getsInstance().initAd(var1);
-//        info = new PhoneInfo(var1);
-//
-//        if(isDebugger == true)
-//        {
-//            PaySdkMgr.getsInstance().setTestMode();
-//        }
-//        PaySdkMgr.getsInstance().setStrict(true);
-//        PaySdkMgr.getsInstance().initAriesPay(var1,AP_ID,CP_ID,API_KEY,StartPayEntity.PAY_MODE_SMS, new InitResultCallBack() {
-//
-//            @Override
-//            public void onSuccess(List<SupportPayInfoEntity> list, boolean b, CountryCurrencyData countryCurrencyData) {
-//                Log.i(TAG,"onSuccess:"+
-//                        countryCurrencyData.countryCode + "	"+
-//                        countryCurrencyData.currency + " "+
-//                        countryCurrencyData.mcc +" "+
-//                        countryCurrencyData.smsOptimalAmount);
-//                tempData = countryCurrencyData;
-//
-//                YouleSdkMgr.getsInstance().getUserCode();
-//            }
-//
-//            @Override
-//            public void onFail(int i) {
-//                Log.i(TAG,"onFail:"+i);
-//            }
-//        });
-//    }
-//    public void initAd(Context var1,List<String> id,boolean isDebugger)
-//    {
-//        request = new NetUtil("80000004","game");
-//        var = var1;
-//        AppLovinMgr.getsInstance().initAd(var1,id,false);
-//        MobileAdsMgr.getsInstance().initAd(var1);
-//        info = new PhoneInfo(var1);
-//
-//        if(isDebugger == true)
-//        {
-//            PaySdkMgr.getsInstance().setTestMode();
-//        }
-//        PaySdkMgr.getsInstance().setStrict(true);
-//        PaySdkMgr.getsInstance().initAriesPay(var1,AP_ID,CP_ID,API_KEY,StartPayEntity.PAY_MODE_SMS, new InitResultCallBack() {
-//
-//            @Override
-//            public void onSuccess(List<SupportPayInfoEntity> list, boolean b, CountryCurrencyData countryCurrencyData) {
-//                Log.i(TAG,"onSuccess:"+
-//                        countryCurrencyData.countryCode + "	"+
-//                        countryCurrencyData.currency + " "+
-//                        countryCurrencyData.mcc +" "+
-//                        countryCurrencyData.smsOptimalAmount);
-//                tempData = countryCurrencyData;
-//
-//                YouleSdkMgr.getsInstance().getUserCode();
-//            }
-//
-//            @Override
-//            public void onFail(int i) {
-//                Log.i(TAG,"onFail:"+i);
-//            }
-//        });
-//
-//
-//
-//    }
-
     public void preloadAd(Activity var1)
     {
         MobileAdsMgr.getsInstance().preloadAd(var1,rewardedAdId);
@@ -211,85 +139,75 @@ public class YouleSdkMgr {
         isPlayerIng = true;
         LoadingDialog.getInstance(var1).show();//显示
 
-        handler.post(new Runnable() {
+
+        boolean isAd = false;
+        if(isAd == false && (request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentType.length() <= 0))
+        {
+            Log.i(TAG,"YouleSdkMgr.startPay sdk初始化参数错误；userCode:"+request.userCode+";choiceId:"+request.choiceId+";paymentId"+request.paymentType);
+            isAd = true;
+        }
+        if(isAd == false && (tempData == null || tempData.smsOptimalAmount <= 0))
+        {
+            Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
+            isAd = true;
+        }
+
+        if(isAd == false && (tempData == null || tempData.smsOptimalAmount <= 0))
+        {
+            Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
+            isAd = true;
+        }
+
+        if(isAd == false && (request.paymentType.indexOf("AD") != -1))
+        {
+            Log.i(TAG,"YouleSdkMgr.startPay 支付方式为广告");
+            isAd = true;
+        }
+
+        if( isAd == true)
+        {
+            MobileAdsMgr.getsInstance().showRewardedAd(new CallBackFunction() {
+
+                @Override
+                public void onCallBack(boolean data) {
+                    isPlayerIng = false;
+                    callBack.onCallBack(data);
+                    LoadingDialog.getInstance(var1).hide();//显示
+
+                }
+            });
+            return;
+        }
+
+
+
+
+        paySdkStartPay(var1, new CallBackFunction() {
             @Override
-            public void run() {
+            public void onCallBack(boolean data) {
 
-                boolean isAd = false;
-                if(isAd == false && (request.userCode.length() <= 0 || request.choiceId.length() <= 0 || request.paymentType.length() <= 0))
+                Log.i(TAG,"paySdkStartPay"+data);
+                if(data == false)
                 {
-                    Log.i(TAG,"YouleSdkMgr.startPay sdk初始化参数错误；userCode:"+request.userCode+";choiceId:"+request.choiceId+";paymentId"+request.paymentType);
-                    isAd = true;
-                }
-                if(isAd == false && (tempData == null || tempData.smsOptimalAmount <= 0))
-                {
-                    Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
-                    isAd = true;
-                }
-
-                if(isAd == false && (tempData == null || tempData.smsOptimalAmount <= 0))
-                {
-                    Log.i(TAG,"YouleSdkMgr.startPay 没有合适的价格");
-                    isAd = true;
-                }
-
-                if(isAd == false && (request.paymentType.indexOf("AD") != -1))
-                {
-                    Log.i(TAG,"YouleSdkMgr.startPay 支付方式为广告");
-                    isAd = true;
-                }
-
-                if( isAd == true)
-                {
-                    MobileAdsMgr.getsInstance().showRewardedAd(new CallBackFunction() {
+                    Log.i(TAG,"支付失败调用广告");
+                    MobileAdsMgr.getsInstance().showRewardedAd( new CallBackFunction() {
 
                         @Override
                         public void onCallBack(boolean data) {
                             isPlayerIng = false;
                             callBack.onCallBack(data);
                             LoadingDialog.getInstance(var1).hide();//显示
-
                         }
                     });
-                    return;
                 }
-
-
-
-
-                paySdkStartPay(var1, new CallBackFunction() {
-                    @Override
-                    public void onCallBack(boolean data) {
-
-                        Log.i(TAG,"paySdkStartPay"+data);
-                        if(data == false)
-                        {
-                            Log.i(TAG,"支付失败调用广告");
-                            MobileAdsMgr.getsInstance().showRewardedAd( new CallBackFunction() {
-
-                                @Override
-                                public void onCallBack(boolean data) {
-                                    isPlayerIng = false;
-                                    callBack.onCallBack(data);
-                                    LoadingDialog.getInstance(var1).hide();//显示
-                                }
-                            });
-                        }
-                        else
-                        {
-                            isPlayerIng = false;
-                            callBack.onCallBack(true);
-                            LoadingDialog.getInstance(var1).hide();//显示
-                        }
-                    }
-                });
+                else
+                {
+                    isPlayerIng = false;
+                    callBack.onCallBack(true);
+                    LoadingDialog.getInstance(var1).hide();//显示
+                }
             }
         });
-
-
-
-
-
     }
     public void paySdkStartPay(Activity var1,CallBackFunction callBack)
     {
