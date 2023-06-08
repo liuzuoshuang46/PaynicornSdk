@@ -166,8 +166,13 @@ public class MobileAdsMgr {
     public void createBanner(Activity var1, String var2)
     {
 
+        createBanner(var1,var2,Gravity.BOTTOM);
+    }
+    public void createBanner(Activity var1, String var2,int var3)
+    {
+
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity= Gravity.TOP;
+        params.gravity= var3;
         AdManagerAdView adView = new AdManagerAdView(var1);
         adView.setAdUnitId(var2);
         var1.addContentView(adView, params);
