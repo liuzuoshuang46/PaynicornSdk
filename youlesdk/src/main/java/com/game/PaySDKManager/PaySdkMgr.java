@@ -94,7 +94,30 @@ public class PaySdkMgr {
     {
         PaySDKManager.getsInstance().convertVirtualToLocal(var1,var2,var3);
     }
-    //发起在线支付或者短代支付
+//    //发起在线支付或者短代支付
+//    public  void startSMSPay(Activity var1, StartPayEntity var2, StartPayCallBack var3)  {
+//
+//        StartPayEntity startPayEntity = new StartPayEntity();
+//        startPayEntity.amount =  var2.amount;
+//        startPayEntity.countryCode = var2.countryCode;
+//        startPayEntity.currency = var2.currency;
+//        startPayEntity.orderNum = var2.orderNum;//order number
+//        startPayEntity.payMode = StartPayEntity.PAY_MODE_SMS;//支付方式
+//
+//        this.startPay(var1,startPayEntity,var3);
+//    }
+//    public  void startONLINEPay(Activity var1, StartPayEntity var2, StartPayCallBack var3)  {
+//
+//        StartPayEntity startPayEntity = new StartPayEntity();
+//        startPayEntity.amount =  var2.amount;
+//        startPayEntity.countryCode = var2.countryCode;
+//        startPayEntity.currency = var2.currency;
+//        startPayEntity.orderNum = var2.orderNum;//order number
+//        startPayEntity.payMode = StartPayEntity.PAY_MODE_ONLINE;//支付方式
+//
+//        this.startPay(var1,startPayEntity,var3);
+//
+//    }
     public  void startPay(Activity var1, StartPayEntity var2, StartPayCallBack var3)  {
 
         StartPayEntity startPayEntity = new StartPayEntity();
@@ -103,7 +126,7 @@ public class PaySdkMgr {
         startPayEntity.currency = var2.currency;
         startPayEntity.netPaySp = "card";//指定在线支付的渠道
         startPayEntity.orderNum = var2.orderNum;//order number
-        startPayEntity.payMode = StartPayEntity.PAY_MODE_SMS;//在线支付
+        startPayEntity.payMode = var2.payMode;//支付方式
         startPayEntity.matchDown = true;//支持向下取金额的功能，当支付方式支持的金额小 于发起支付的金额，开启这个功能可以匹配该支付方式。默认为false。
         startPayEntity.adjustMode = BigDecimal.ROUND_UP;//设置adjustMode会根据设置 的mode，结合对应的币种来处理传入的金额各个位数取整，以防传入
         startPayEntity.serviceConfigPriority = true;

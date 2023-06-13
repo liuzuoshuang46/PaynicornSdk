@@ -83,10 +83,10 @@ public class YouleSdkMgr {
         if(isDebugger == true)
         {
             PaySdkMgr.getsInstance().setTestMode();
-            PaySdkMgr.getsInstance().setStrict(true);
         }
 
-        PaySdkMgr.getsInstance().initAriesPay(var1,AP_ID,CP_ID,API_KEY,StartPayEntity.PAY_MODE_SMS, new InitResultCallBack() {
+        PaySdkMgr.getsInstance().setStrict(true);
+        PaySdkMgr.getsInstance().initAriesPay(var1,AP_ID,CP_ID,API_KEY,StartPayEntity.PAY_MODE_ALL, new InitResultCallBack() {
 
             @Override
             public void onSuccess(List<SupportPayInfoEntity> list, boolean b, CountryCurrencyData countryCurrencyData) {
@@ -128,7 +128,7 @@ public class YouleSdkMgr {
             }
         }).start();
     }
-    public void  startPay(Activity var1,CallBackFunction callBack) throws Exception {
+    public void  startPay(Activity var1,int payMode,CallBackFunction callBack) throws Exception {
         if(isPlayerIng == true)
         {
             Log.i(TAG,"YouleSdkMgr.startPay 正在支付中");
@@ -182,7 +182,7 @@ public class YouleSdkMgr {
 
 
 
-        paySdkStartPay(var1, new CallBackFunction() {
+        paySdkStartPay(var1,payMode, new CallBackFunction() {
             @Override
             public void onCallBack(boolean data) {
 
@@ -209,7 +209,7 @@ public class YouleSdkMgr {
             }
         });
     }
-    public void paySdkStartPay(Activity var1,CallBackFunction callBack)
+    public void paySdkStartPay(Activity var1,int payMode,CallBackFunction callBack)
     {
 
 
@@ -231,6 +231,7 @@ public class YouleSdkMgr {
         startPayEntity.countryCode = tempData.countryCode;
         startPayEntity.currency = tempData.currency;
         startPayEntity.orderNum =this.payOrderNum;//order number
+        startPayEntity.payMode = payMode;//order number
 
          PaySdkMgr.getsInstance().startPay(var1,startPayEntity, new StartPayCallBack() {
 
